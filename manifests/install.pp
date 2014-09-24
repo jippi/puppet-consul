@@ -14,17 +14,37 @@ class consul::install {
   if $consul::install_method == 'url' {
 
     ensure_packages(['unzip'])
+
+    if $consul::download_url == undef {
+      $download_url = "https://dl.bintray.com/mitchellh/consul/${consul::version}_linux_${consul::arch}.zip"
+    } else {
+      $download_url = $consul::download_url
+    }
+
+    notify { "Downloading: ${download_url}": }
+
+    file { "${consul::data_dir}/${consul::version}_bin":
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    } ->
     staging::file { 'consul.zip':
-      source => $consul::download_url
+      source => $download_url
     } ->
     staging::extract { 'consul.zip':
-      target  => $consul::bin_dir,
-      creates => "${consul::bin_dir}/consul",
+      target  => "${consul::data_dir}/${consul::version}_bin",
+      creates => "${consul::data_dir}/${consul::version}_bin/consul",
     } ->
-    file { "${consul::bin_dir}/consul":
+    file { "${consul::data_dir}/${consul::version}_bin/consul":
       owner => 'root',
       group => 'root',
       mode  => '0555',
+    } ->
+    file { "${consul::bin_dir}/consul":
+      ensure => 'symlink',
+      force  => true,
+      target => "${consul::data_dir}/${consul::version}_bin/consul",
     }
 
     if ($consul::ui_dir and $consul::data_dir) {
