@@ -43,7 +43,7 @@ class consul::install {
       ensure => 'symlink',
       force  => true,
       target => "${consul::data_dir}/${consul::version}_bin/consul",
-    }
+    } ~> Service['consul']
 
     if ($consul::ui_dir and $consul::data_dir) {
       file { "${consul::data_dir}/${consul::version}_web_ui":
@@ -60,7 +60,7 @@ class consul::install {
       file { "${consul::ui_dir}":
         ensure => 'symlink',
         target => "${consul::data_dir}/${consul::version}_web_ui/dist",
-      }
+      } ~> Service['consul']
     }
 
   } elsif $consul::install_method == 'package' {
