@@ -21,8 +21,6 @@ class consul::install {
       $download_url = $consul::download_url
     }
 
-    notify { "Downloading: ${download_url}": }
-
     file { "${consul::data_dir}/${consul::version}_bin":
       ensure => 'directory',
       owner  => 'root',
