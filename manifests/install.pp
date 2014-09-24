@@ -29,10 +29,10 @@ class consul::install {
       group  => 'root',
       mode   => '0755',
     } ->
-    staging::file { 'consul.zip':
+    staging::file { "consul-${consul::version}.zip":
       source => $download_url
     } ->
-    staging::extract { 'consul.zip':
+    staging::extract { "consul-${consul::version}.zip":
       target  => "${consul::data_dir}/${consul::version}_bin",
       creates => "${consul::data_dir}/${consul::version}_bin/consul",
     } ->
