@@ -9,7 +9,7 @@ define consul::service(
   $id = $title
 
   $basic_hash = {
-    'id'   => $id,
+    'id'   => "${id}_${::hostname}",
     'name' => $name,
     'tags' => $tags,
   }
